@@ -10,4 +10,14 @@ open class ResGuardPluginExtensions() {
      * @author should include full path. Example: C:\Users\You
      */
     var outputMappingPath: String? = null
+
+    /**
+     * @throws Exception value is less than 16
+     */
+    var minNameLength: Int = 25
+
+    /**
+     * @throws Exception value is greater than 255
+     */
+    var maxNameLength: Int = 255
 }

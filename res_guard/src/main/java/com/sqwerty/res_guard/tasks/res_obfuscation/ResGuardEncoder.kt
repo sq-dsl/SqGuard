@@ -61,7 +61,7 @@ open class ResGuardEncoder : SqTask() {
     }
 
     private fun FileOutputStream.writeValue(value: String, encryptedValue: String) {
-        val pair = "${value}->${value}\n"
+        val pair = "${value}->${encryptedValue}\n"
         write(pair.encodeToByteArray())
     }
 

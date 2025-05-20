@@ -1,6 +1,6 @@
 package com.sqwerty.res_guard.tasks.res_obfuscation
 
-import com.sqwerty.res_guard.utils.Helper
+import com.sqwerty.res_guard.ResGuardPluginExtensions
 import org.gradle.api.Project
 import java.security.MessageDigest
 import java.util.Base64
@@ -15,6 +15,9 @@ object ResGuardEncryptor {
         val saltedInput = StringBuilder(this.lowercase())
         val salt = UUID.randomUUID().toString().replace("-", "").substring(0, 16)
         saltedInput.append(salt)
+
+        val timeComponent = System.currentTimeMillis().toString().takeLast((3..7).random())
+        saltedInput.append(timeComponent)
 
         val secretKey = project.projectDir.parentFile.parentFile.name + project.name
         val messageDigest = MessageDigest.getInstance("SHA-256")
@@ -40,10 +43,18 @@ object ResGuardEncryptor {
         } else {
             finalOutput.toString()
         }
-        if (result.length < 25) {
-            result = result + result.toCharArray().apply { shuffle() }.concatToString()
+        val extensions = project.extensions.getByType(ResGuardPluginExtensions::class.java)
+        val minNameLength = extensions.minNameLength
+        val maxNameLength = extensions.maxNameLength
+
+        repeat((6..36).random()) {
+            result += getRandomLowercaseChar()
         }
-        return result.substring(0, result.length.coerceAtMost(127))
+        if (result.length < minNameLength) {
+            repeat(minNameLength - result.length + (0..96).random()) { result += getRandomLowercaseChar() }
+        }
+
+        return result.substring(0, result.length.coerceAtMost(maxNameLength))
     }
 
 }

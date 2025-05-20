@@ -18,7 +18,6 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import java.io.File
 import java.io.FileOutputStream
-import kotlin.reflect.KClass
 
 open class ResGuardEncoder : SqTask() {
     private val mappingFile = Helper.getResGuardMappingFile(project)
@@ -83,8 +82,6 @@ open class ResGuardEncoder : SqTask() {
     }
 
     companion object : SqTaskCompanion() {
-        override val taskKClass: KClass<out SqTask> get() = ResGuardEncoder::class
-
         override fun Project.addToTaskSequence() {
             //tasks.named("preReleaseBuild") { dependsOn(taskKClass.jvmName) }
         }

@@ -22,7 +22,10 @@ abstract class SqTask : DefaultTask() {
     open fun Task.onlyIf(): Boolean = true
 
     abstract class SqTaskCompanion {
-        abstract val taskKClass: KClass<out SqTask>
+        val taskKClass: KClass<out SqTask> = Class.forName(
+            this@SqTaskCompanion::class.java.name.substringBefore("$")
+        ).kotlin as KClass<out SqTask>
+
         abstract fun Project.addToTaskSequence()
 
         operator fun invoke(project: Project) {

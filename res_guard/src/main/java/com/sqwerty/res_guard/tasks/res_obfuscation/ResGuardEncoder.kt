@@ -6,6 +6,7 @@ import com.sqwerty.res_guard.ResGuardPluginExtensions
 import com.sqwerty.res_guard.tasks.res_obfuscation.ResGuardEncryptor.encryptValue
 import com.sqwerty.res_guard.utils.Helper
 import com.sqwerty.res_guard.utils.Helper.getResGuardMap
+import com.sqwerty.res_guard.utils.Helper.getResources
 import com.sqwerty.res_guard.utils.Helper.isInBlacklist
 import com.sqwerty.res_guard.utils.Helper.replaceRes
 import com.sqwerty.res_guard.utils.Helper.updateFileName
@@ -23,8 +24,8 @@ open class ResGuardEncoder : SqTask() {
     private val mappingFile = Helper.getResGuardMappingFile(project)
 
     override fun Task.doLast() {
-        val mappingFOS = FileOutputStream(mappingFile, true)
-        val resources = getResources()
+        val mappingFOS = FileOutputStream(mappingFile, false)
+        val resources = getResources(project)
         val scope = CoroutineScope(Dispatchers.IO)
 
         val asyncResUpdating = resources.groupBy { res -> res.nameWithoutExtension }.values
@@ -62,19 +63,6 @@ open class ResGuardEncoder : SqTask() {
     private fun FileOutputStream.writeValue(value: String, encryptedValue: String) {
         val pair = "${value}->${encryptedValue}\n"
         write(pair.encodeToByteArray())
-    }
-
-    private fun getResources(): List<File> {
-        val resTypes = project.extensions.getByType(ResGuardPluginExtensions::class.java).resTypes
-        val s = File.separator
-        return project.layout.projectDirectory.dir("src${s}main${s}res").run {
-            println(asFile.absolutePath)
-            asFile.listFiles().filter {
-                resTypes.any { resTypeName ->
-                    it.name.contains(resTypeName.name.lowercase())
-                }
-            }
-        }.map { it.listFiles().toList() }.flatten()
     }
 
     override fun Task.onlyIf(): Boolean {

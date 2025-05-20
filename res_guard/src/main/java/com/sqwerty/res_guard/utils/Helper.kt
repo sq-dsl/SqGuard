@@ -6,6 +6,18 @@ import org.gradle.api.Project
 import java.io.File
 
 object Helper {
+    fun getResources(project: Project): List<File> {
+        val resTypes = project.extensions.getByType(ResGuardPluginExtensions::class.java).resTypes
+        val s = File.separator
+        return project.layout.projectDirectory.dir("src${s}main${s}res").run {
+            asFile.listFiles().filter {
+                resTypes.any { resTypeName ->
+                    it.name.contains(resTypeName.name.lowercase())
+                }
+            }
+        }.map { it.listFiles().toList() }.flatten()
+    }
+
     fun getResGuardMappingFile(project: Project): File {
         val filePath = project.extensions.getByType(ResGuardPluginExtensions::class.java)
             .outputMappingPath ?: project.file("release").apply { mkdir() }.absolutePath

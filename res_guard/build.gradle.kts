@@ -1,5 +1,6 @@
 plugins {
     `kotlin-dsl`
+    //id("maven-publish")
 }
 gradlePlugin {
     plugins {
@@ -10,7 +11,8 @@ gradlePlugin {
         }
     }
 }
-dependencies{
+
+dependencies {
     implementation(":core")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 }

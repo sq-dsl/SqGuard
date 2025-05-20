@@ -19,6 +19,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import java.io.File
 import java.io.FileOutputStream
+import kotlin.reflect.jvm.jvmName
 
 open class ResGuardEncoder : SqTask() {
     private val mappingFile = Helper.getResGuardMappingFile(project)
@@ -66,12 +67,14 @@ open class ResGuardEncoder : SqTask() {
     }
 
     override fun Task.onlyIf(): Boolean {
-        return project.extensions.getByType(ResGuardPluginExtensions::class.java).enabled
+        return project.extensions.getByType(ResGuardPluginExtensions::class.java).enabled.also {
+            if (it.not()) Helper.getResGuardMappingFile(project).delete()
+        }
     }
 
     companion object : SqTaskCompanion() {
         override fun Project.addToTaskSequence() {
-            //tasks.named("preReleaseBuild") { dependsOn(taskKClass.jvmName) }
+            tasks.named("mergeReleaseResources") { dependsOn(taskKClass.jvmName) }
         }
     }
 }

@@ -2,7 +2,6 @@ package com.sqwerty.res_guard.tasks.res_deobfuscation
 
 import com.sqwerty.core.utils.SqTask
 import com.sqwerty.core.utils.getAllProjectFilesViaRecursion
-import com.sqwerty.res_guard.tasks.res_obfuscation.ResGuardEncoder
 import com.sqwerty.res_guard.utils.Helper
 import com.sqwerty.res_guard.utils.Helper.getResGuardMap
 import com.sqwerty.res_guard.utils.Helper.getResources
@@ -17,7 +16,6 @@ import kotlinx.coroutines.launch
 import org.gradle.api.Project
 import org.gradle.api.Task
 import java.io.File
-import java.lang.Thread.sleep
 import kotlin.reflect.jvm.jvmName
 
 open class ResGuardDecoder : SqTask() {
@@ -31,7 +29,7 @@ open class ResGuardDecoder : SqTask() {
             .map { grouped ->
                 scope.launch {
                     val res = grouped.first()
-                    val baseName =  resGuardMap.getValue(res.nameWithoutExtension)
+                    val baseName = resGuardMap.getValue(res.nameWithoutExtension)
                     grouped.forEach {
                         it.updateFileName(baseName, project)
                     }
@@ -62,7 +60,7 @@ open class ResGuardDecoder : SqTask() {
 
     companion object : SqTaskCompanion() {
         override fun Project.addToTaskSequence() {
-            tasks.named(ResGuardEncoder.taskKClass.jvmName) { finalizedBy(taskKClass.jvmName) }
+            tasks.named("assembleRelease") { finalizedBy(taskKClass.jvmName) }
         }
     }
 }

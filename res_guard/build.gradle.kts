@@ -1,6 +1,7 @@
 plugins {
     `kotlin-dsl`
-    //id("maven-publish")
+    id("java-library")
+    id("maven-publish")
 }
 gradlePlugin {
     plugins {
@@ -15,4 +16,17 @@ gradlePlugin {
 dependencies {
     implementation(":core")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("mavenJava") {
+                from(components["java"])
+                groupId = "com.github.sq-dsl"
+                artifactId = "sq.res-guard"
+                version = "0.0.1"
+            }
+        }
+    }
 }

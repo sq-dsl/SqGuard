@@ -52,7 +52,7 @@ open class ResGuardEncoder : SqTask() {
                         var updatedText = this
                         latestMapping.forEach { (key, value) ->
                             updatedText = ResType.values().fold(updatedText) { prev, resType ->
-                                prev.replaceRes(resType, value, key)
+                                prev.replaceRes(resType, key, value)
                             }
                         }
                         file.writeText(updatedText)

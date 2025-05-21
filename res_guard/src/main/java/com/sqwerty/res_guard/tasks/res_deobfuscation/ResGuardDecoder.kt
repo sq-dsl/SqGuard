@@ -61,6 +61,7 @@ open class ResGuardDecoder : SqTask() {
     companion object : SqTaskCompanion() {
         override fun Project.addToTaskSequence() {
             tasks.named("assembleRelease") { finalizedBy(taskKClass.jvmName) }
+            tasks.named("bundleRelease") { finalizedBy(taskKClass.jvmName) }
         }
     }
 }

@@ -1,12 +1,28 @@
 plugins {
     `kotlin-dsl`
+    id("maven-publish")
 }
+
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
 }
+
 kotlin {
     compilerOptions {
         jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11
+    }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("mavenJava") {
+                from(components["java"])
+                groupId = "com.github.sq-dsl"
+                artifactId = "sq.core"
+                version = "0.0.1"
+            }
+        }
     }
 }

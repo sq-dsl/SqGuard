@@ -3,6 +3,10 @@ plugins {
     id("java-library")
     id("maven-publish")
 }
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
 gradlePlugin {
     plugins {
         create("resGuardPlugin") {
@@ -12,12 +16,10 @@ gradlePlugin {
         }
     }
 }
-
 dependencies {
     implementation(":core")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 }
-
 afterEvaluate {
     publishing {
         publications {

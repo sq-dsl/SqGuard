@@ -2,7 +2,7 @@ package com.sqwerty.res_guard.tasks.res_obfuscation
 
 import com.sqwerty.core.utils.SqTask
 import com.sqwerty.core.utils.getAllProjectFilesViaRecursion
-import com.sqwerty.res_guard.ResGuardPluginExtensions
+import com.sqwerty.res_guard.extensions.ResGuardExtensions
 import com.sqwerty.res_guard.tasks.res_obfuscation.ResGuardEncryptor.encryptValue
 import com.sqwerty.res_guard.utils.Helper
 import com.sqwerty.res_guard.utils.Helper.getResGuardMap
@@ -67,7 +67,7 @@ open class ResGuardEncoder : SqTask() {
     }
 
     override fun Task.onlyIf(): Boolean {
-        return project.extensions.getByType(ResGuardPluginExtensions::class.java).enabled.also {
+        return project.extensions.getByType(ResGuardExtensions::class.java).enabled.also {
             if (it.not()) Helper.getResGuardMappingFile(project).delete()
         }
     }

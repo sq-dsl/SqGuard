@@ -1,4 +1,6 @@
-import com.sqwerty.res_guard.configureResGuard
+import com.sqwerty.res_guard.configureResGuardPlugin
+import com.sqwerty.res_guard.extensions.ResGuardExtensions
+import com.sqwerty.res_guard.extensions.ResResizeExtensions
 
 plugins {
     alias(libs.plugins.android.application)
@@ -6,8 +8,14 @@ plugins {
     id("sq.res-guard")
 }
 
-configureResGuard {
+configureResGuardPlugin<ResGuardExtensions> {
+    enabled = false
+}
+
+configureResGuardPlugin<ResResizeExtensions> {
     enabled = true
+    resizeHard = true
+    pathToMagick = "C:\\Users\\sqwerty-dsl\\AndroidStudioProjects\\Utils\\magick"
 }
 
 android {

@@ -1,13 +1,13 @@
 package com.sqwerty.res_guard.utils
 
 import com.sqwerty.core.utils.isImage
-import com.sqwerty.res_guard.ResGuardPluginExtensions
+import com.sqwerty.res_guard.extensions.ResGuardExtensions
 import org.gradle.api.Project
 import java.io.File
 
 object Helper {
     fun getResources(project: Project): List<File> {
-        val resTypes = project.extensions.getByType(ResGuardPluginExtensions::class.java).resTypes
+        val resTypes = project.extensions.getByType(ResGuardExtensions::class.java).resTypes
         val s = File.separator
         return project.layout.projectDirectory.dir("src${s}main${s}res").run {
             asFile.listFiles().filter {
@@ -19,7 +19,7 @@ object Helper {
     }
 
     fun getResGuardMappingFile(project: Project): File {
-        val filePath = project.extensions.getByType(ResGuardPluginExtensions::class.java)
+        val filePath = project.extensions.getByType(ResGuardExtensions::class.java)
             .outputMappingPath ?: project.file("release").apply { mkdir() }.absolutePath
         return File(filePath, "resGuard.map")
     }

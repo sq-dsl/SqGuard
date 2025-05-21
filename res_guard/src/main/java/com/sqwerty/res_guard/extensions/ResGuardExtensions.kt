@@ -1,9 +1,11 @@
-package com.sqwerty.res_guard
+package com.sqwerty.res_guard.extensions
 
 import com.sqwerty.res_guard.utils.ResType
+import org.gradle.api.GradleException
 
-open class ResGuardPluginExtensions() {
+open class ResGuardExtensions {
     var enabled: Boolean = false
+
     var resTypes: List<ResType> = ResType.values().toList()
 
     /**
@@ -12,12 +14,12 @@ open class ResGuardPluginExtensions() {
     var outputMappingPath: String? = null
 
     /**
-     * @throws Exception value is less than 16
+     * @throws GradleException value is less than 16
      */
     var minNameLength: Int = 25
 
     /**
-     * @throws Exception value is greater than 255
+     * @throws GradleException value is greater than 255
      */
     var maxNameLength: Int = 255
 }

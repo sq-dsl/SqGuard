@@ -1,6 +1,7 @@
 package com.sqwerty.res_guard.tasks.res_obfuscation
 
-import com.sqwerty.res_guard.ResGuardPluginExtensions
+import com.sqwerty.res_guard.extensions.ResGuardExtensions
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import java.security.MessageDigest
 import java.util.Base64
@@ -43,9 +44,11 @@ object ResGuardEncryptor {
         } else {
             finalOutput.toString()
         }
-        val extensions = project.extensions.getByType(ResGuardPluginExtensions::class.java)
+        val extensions = project.extensions.getByType(ResGuardExtensions::class.java)
         val minNameLength = extensions.minNameLength
         val maxNameLength = extensions.maxNameLength
+
+        if (maxNameLength > 255 || minNameLength < 16) throw GradleException()
 
         repeat((6..36).random()) {
             result += getRandomLowercaseChar()

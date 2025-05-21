@@ -19,9 +19,9 @@ dependencyResolutionManagement {
     }
 }
 
-includeBuild("res_guard")
-includeBuild("core")
-
 rootProject.name = "SqGuard"
+rootProject.name = "sq-dsl"
+
 include(":app")
- 
+include(":res_guard")
+include(":core")  // This includes core as a subproject of app

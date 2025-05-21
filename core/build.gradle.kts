@@ -1,5 +1,6 @@
 plugins {
     `kotlin-dsl`
+    id("java-library")
     id("maven-publish")
 }
 
@@ -20,7 +21,7 @@ afterEvaluate {
             create<MavenPublication>("mavenJava") {
                 from(components["java"])
                 groupId = "com.github.sq-dsl"
-                artifactId = "sq.core"
+                artifactId = "core"
                 version = "0.0.1"
             }
         }

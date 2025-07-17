@@ -18,7 +18,7 @@ gradlePlugin {
 }
 dependencies {
     implementation(project(":core"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+    implementation(libs.kotlinx.coroutines.core)
 }
 afterEvaluate {
     publishing {

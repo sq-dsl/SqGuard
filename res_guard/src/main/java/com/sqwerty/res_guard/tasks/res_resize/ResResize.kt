@@ -10,7 +10,9 @@ import java.io.File
 import kotlin.reflect.jvm.jvmName
 
 open class ResResize : SqTask() {
-    private val isWindows = System.getProperty("os.name").lowercase().contains("win")
+    private val isWinOrLinux = System.getProperty("os.name").lowercase().run {
+        contains("win") || contains("linux")
+    }
     private lateinit var magickDir: Directory
     private val s = File.separator
     private val drawableDir = project.layout.projectDirectory.dir("src${s}main${s}res${s}drawable")
@@ -22,15 +24,20 @@ open class ResResize : SqTask() {
     }
 
     override fun Task.onlyIf(): Boolean {
-        val extensions = project.extensions.getByType(ResResizeExtensions::class.java)
-        if (isWindows) {
-            val pathToMagick = extensions.pathToMagick ?: return false
-            magickDir = File(pathToMagick).ifNotExist { return false }
-                .run { project.objects.directoryProperty().apply { set(this@run) }.get() }
+        return try {
+            if (isDrawablesDirExistAndNotEmpty().not()) return false
+            val extensions = project.extensions.getByType(ResResizeExtensions::class.java)
+            if (isWinOrLinux) {
+                val pathToMagick = extensions.pathToMagick ?: return false
+                magickDir = File(pathToMagick).ifNotExist { return false }
+                    .run { project.objects.directoryProperty().apply { set(this@run) }.get() }
+            }
+            (project.extensions.getByType(ResResizeExtensions::class.java).enabled
+                    && (drawableDir.listFiles()?.count { it.extension == "png" } ?: 0) > 0
+                    && (isDesignStandardized() || extensions.resizeHard))
+        } catch (_: Exception) {
+            return false
         }
-        return project.extensions.getByType(ResResizeExtensions::class.java).enabled
-                && drawableDir.listFiles().count { it.extension == "png" } > 0
-                && (isDesignStandardized() || extensions.resizeHard)
     }
 
     companion object : SqTaskCompanion() {
@@ -40,10 +47,10 @@ open class ResResize : SqTask() {
     }
 
     private fun isDesignStandardized(): Boolean {
-        return drawableDir.listFiles().filter { it.extension == "png" }
+        return drawableDir.listFiles()!!.filter { it.extension == "png" }
             .any {
                 Runtime.getRuntime().exec(createCheckPrompt(it)).inputStream.use {
-                    it.readBytes().decodeToString().split(" ").let {
+                    it.readBytes().decodeToString().split("~").let {
                         ImageSize(x = it[0].toInt(), y = it[1].toInt())
                     }
                 }.run {
@@ -53,7 +60,7 @@ open class ResResize : SqTask() {
     }
 
     private fun resizeImages() {
-        val images = drawableDir.listFiles().filter { it.extension == "png" }
+        val images = drawableDir.listFiles()!!.filter { it.extension == "png" }
         images.forEach { image ->
             Dpi.values().forEach { dpi ->
                 val convertPrompt = createConvertPrompt(image, dpi)
@@ -85,7 +92,7 @@ open class ResResize : SqTask() {
             "-quality",
             "80", resultPath
         )
-        if (isWindows) {
+        if (isWinOrLinux) {
             val magickExe = magickDir.file("magick.exe").asFile.absolutePath
             convertCommand = arrayOf(magickExe) + convertCommand
         } else {
@@ -95,13 +102,16 @@ open class ResResize : SqTask() {
     }
 
     private fun createCheckPrompt(image: File): Array<String> {
-        val isWindows = System.getProperty("os.name").lowercase().contains("win")
-        var checkSizeDefaultCommand = arrayOf("identify", "-format", "%w %h", image.absolutePath)
-        if (isWindows) {
+        var checkSizeDefaultCommand = arrayOf("identify", "-format", "%w~%h", image.absolutePath)
+        if (isWinOrLinux) {
             val magickExe = magickDir.file("magick.exe").asFile.absolutePath
             checkSizeDefaultCommand = arrayOf(magickExe) + checkSizeDefaultCommand
         }
         return checkSizeDefaultCommand
+    }
+
+    private fun isDrawablesDirExistAndNotEmpty(): Boolean {
+        return drawableDir.exists() && (drawableDir.listFiles()?.isNotEmpty() ?: false)
     }
 
 }

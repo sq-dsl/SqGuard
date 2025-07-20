@@ -33,7 +33,14 @@ open class ResGuardEncoder : SqTask() {
             .map { grouped ->
                 scope.launch {
                     val res = grouped.first()
-                    val encryptedValue = res.nameWithoutExtension.encryptValue(project)
+
+                    val encryptedValue = let {
+                        var encryptedName = res.nameWithoutExtension.encryptValue(project)
+                        while (mappingFile.readText().contains(encryptedName)) {
+                            encryptedName = res.nameWithoutExtension.encryptValue(project)
+                        }
+                        encryptedName
+                    }
                     mappingFOS.writeValue(res.nameWithoutExtension, encryptedValue)
                     grouped.forEach {
                         it.updateFileName(encryptedValue, project)

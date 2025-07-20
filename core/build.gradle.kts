@@ -22,7 +22,7 @@ afterEvaluate {
                 from(components["java"])
                 groupId = "com.github.sq-dsl"
                 artifactId = "core"
-                version = "0.0.1"
+                version = "0.0.2"
             }
         }
     }

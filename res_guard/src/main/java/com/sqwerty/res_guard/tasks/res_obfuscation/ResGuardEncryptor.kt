@@ -5,6 +5,7 @@ import org.gradle.api.Project
 import java.security.MessageDigest
 import java.util.Base64
 import java.util.UUID
+import java.util.regex.Pattern
 
 object ResGuardEncryptor {
     fun String.encryptValue(project: Project): String {
@@ -21,7 +22,6 @@ object ResGuardEncryptor {
         val safeBase32 = Base64.getUrlEncoder()
             .withoutPadding()
             .encodeToString(hash)
-            .lowercase()
 
         val extensions = project.extensions.getByType(ResGuardExtensions::class.java)
         val minNameLength = extensions.minNameLength.coerceAtLeast(16)
@@ -35,6 +35,7 @@ object ResGuardEncryptor {
         }
 
         return result.take(maxNameLength)
+            .replace(Pattern.compile("\\p{S}", Pattern.CASE_INSENSITIVE).toRegex(), ('a'..'Z').random().toString())
     }
 
 }

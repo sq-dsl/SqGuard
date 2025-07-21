@@ -22,6 +22,7 @@ object ResGuardEncryptor {
         val safeBase32 = Base64.getUrlEncoder()
             .withoutPadding()
             .encodeToString(hash)
+            .lowercase()
 
         val extensions = project.extensions.getByType(ResGuardExtensions::class.java)
         val minNameLength = extensions.minNameLength.coerceAtLeast(16)

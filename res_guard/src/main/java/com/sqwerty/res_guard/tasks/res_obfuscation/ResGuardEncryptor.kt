@@ -29,14 +29,14 @@ object ResGuardEncryptor {
         val maxNameLength = extensions.maxNameLength.coerceAtMost(246)
 
         val base = if (safeBase32[0].isDigit()) "${('a'..'Z').random()}$safeBase32" else safeBase32
-        val padding = (minNameLength..maxNameLength).random() / 4
+        val padding = (minNameLength..maxNameLength).random()
         val result = buildString {
             append(base)
-            while (length < padding) append(('a'..'Z').random())
+            while (length < padding) append(('a'..'z').random())
         }
 
         return result.take(maxNameLength)
-            .replace(Pattern.compile("\\p{S}", Pattern.CASE_INSENSITIVE).toRegex(), ('a'..'Z').random().toString())
+            .replace(Pattern.compile("\\p{S}", Pattern.CASE_INSENSITIVE).toRegex(), ('a'..'z').random().toString())
     }
 
 }

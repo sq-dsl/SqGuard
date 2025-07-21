@@ -19,24 +19,27 @@ object ResGuardEncryptor {
         messageDigest.update((input + salt + timeComponent).toByteArray())
 
         val hash = messageDigest.digest()
-        val safeBase32 = Base64.getUrlEncoder()
-            .withoutPadding()
-            .encodeToString(hash)
-            .lowercase()
 
+        // Encode and sanitize to valid Android resource name (only a-z, 0-9)
+        val rawEncoded = Base64.getUrlEncoder().withoutPadding().encodeToString(hash).lowercase()
+        val safeBase = rawEncoded.replace(Regex("[^a-z0-9]"), "")
+
+        // Ensure first character is a letter
+        val randomLetter = ('a'..'z').random()
+        val base = if (safeBase.firstOrNull()?.isLetter() != true) "$randomLetter$safeBase" else safeBase
+
+        // Get min/max name lengths from extension config
         val extensions = project.extensions.getByType(ResGuardExtensions::class.java)
         val minNameLength = extensions.minNameLength.coerceAtLeast(16)
         val maxNameLength = extensions.maxNameLength.coerceAtMost(246)
+        val targetLength = (minNameLength..maxNameLength).random()
 
-        val base = if (safeBase32[0].isDigit()) "${('a'..'Z').random()}$safeBase32" else safeBase32
-        val padding = (minNameLength..maxNameLength).random()
+        // Build result by appending random letters until desired length
         val result = buildString {
             append(base)
-            while (length < padding) append(('a'..'z').random())
+            while (length < targetLength) append(('a'..'z').random())
         }
 
         return result.take(maxNameLength)
-            .replace(Pattern.compile("\\p{S}", Pattern.CASE_INSENSITIVE).toRegex(), ('a'..'z').random().toString())
     }
-
 }

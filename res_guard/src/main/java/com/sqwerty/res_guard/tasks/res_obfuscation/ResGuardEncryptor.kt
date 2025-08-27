@@ -44,6 +44,6 @@ object ResGuardEncryptor {
     }
 
     private fun getRandomCharOrDash(): Char {
-        return if ((0..1).random() == 1) ('a'..'z').random() else '_'
+        return if ((0..4).random() != 2) ('a'..'z').random() else '_'
     }
 }

@@ -19,7 +19,7 @@ open class ResGuardExtensions {
     var minNameLength: Int = 25
 
     /**
-     * @throws GradleException value is greater than 255
+     * @throws GradleException value is greater than 196
      */
-    var maxNameLength: Int = 255
+    var maxNameLength: Int = 196
 }
